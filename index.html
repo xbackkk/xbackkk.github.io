@@ -3,223 +3,217 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>彩色球v2</title>
+  <title>彩色球v3</title>
   <style>
-    .box {
-      /* text-align: center; */
-      width: 500px;
+    .btn {
+    padding: 5px 15px;
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+    background-color: #e7e4e4;
+    border: 1px solid #e3d8d8;
+    border-radius: 10px;
+    }
+    /* 筛选球 */
+    .ball {
+    height: 25px;
+    width: 25px;
+    border-radius: 50%;
+    color: #fff;
+    text-align: center;
+    line-height: 25px;
+    display: inline-block;
+    font-size: 12px;
+    margin: 5px;
+    }
+
+    /* 生成球 */
+    .big-ball {
+      height: 30px;
+      width: 30px;
+      line-height: 30px;
+      font-size: 14px;
+    }
+
+    .red {
+      background-color: red;
+    }
+    .blue {
+      background-color: blue;
+    }
+    .disabled {
+    background-color: #938b8b;
+    }
+    #wrapExclude{
+      max-width: 600px; 
+      margin: auto; 
+      display: none;
+    }
+    #result{
+      max-width: 600px;
       margin: auto;
     }
-    .info {
-      display: flex;
+    .delete {
+      color: blue;
     }
-    .right-w{
-      flex: 5;
-    }
-    .rand{
-      width: 100%;
-      height: 100%;
-    }
-
-    .ball-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    } 
-    .ball-red {
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      margin: 5px;
-      line-height: 35px;
-      background-color: #ff0000;
-      color: white;
-    }
-    .ball-blue {
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      margin: 5px;
-      line-height: 35px;
-      background-color: blue;
-      color: white;
-    }
-    table {
-      margin: 0 auto;
-      text-align: center;
-      width: 500px;
-      /* 每个表格边框公用 */
-      border-collapse: collapse;
-      color: #3c3637;
-
-    }
-    th {
-      padding: 10px;
-      background: #f2f2f2;
-      font-size: 15px;
-      /* text-align: left; */
-    }
-    td,
-    th {
-      border: 1px solid #ebebeb;
-      padding: 15px;
-    }
-
   </style>
 </head>
 <body>
-  <div class="box">
-    <h1>彩色球v2-条件使用英文','分割</h1>
-    <div class="info" >
-      <div class="left-w">
-        <div class="red">
-          <span>红球：</span><input type="text" class="red-join" id="input" placeholder="选中">
-          <input type="text" class="red-remove" id="input" placeholder="移除">
-        </div>
-        <div class="blue">
-          <span>蓝球：</span><input type="text" class="blue-join" id="input" placeholder="选中">
-          <input type="text" class="blue-remove" id="input" placeholder="移除">
-        </div>
-      </div>
-      <div class="right-w">
-        <button class="rand">生成</button>
-      </div>
+  <div class="btn" id="showExclude">禁止选取</div>
+  <div id="wrapExclude">
+    <div id="redball"style="flex:2;">
     </div>
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>ball</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-      <script>
-        // 获取元素
-        const rand = document.querySelector('.rand')
-        const tbody = document.querySelector('tbody')
-        const info = document.querySelector('.info')
-        // 红-必选和排除
-        const redJoin = document.querySelector('.red-join')
-        const redRemove = document.querySelector('.red-remove')
-        // 蓝-必选和排除
-        const blueJoin = document.querySelector('.blue-join')
-        const blueRemove = document.querySelector('.blue-remove')
-
-        // 存放生成红蓝随机数
-        let arr = []
-
-        // 生成n-m区间的号码
-        function getRandom(n,m){
-          return Math.floor(Math.random()*(m - n + 1 ) + n)
-        }
-
-        // 重置input
-        function ballReset(){
-          const inputArr = document.querySelectorAll('#input')
-          for(let i = 0 ; i < inputArr.length ; i++){
-            // console.log(inputArr[i].value)
-            inputArr[i].value = ''
-          }
-        }
-        // 渲染页面函数
-        function randBall(){
-          const trArr = arr.map(function (ele,index) {
-            return `
-            <tr>
-              <td>${index+1}</td>
-              <td>
-                <div class="ball-container">
-                  <div class="ball-red">${ele[0]}</div>
-                  <div class="ball-red">${ele[1]}</div>
-                  <div class="ball-red">${ele[2]}</div>
-                  <div class="ball-red">${ele[3]}</div>
-                  <div class="ball-red">${ele[4]}</div>
-                  <div class="ball-red">${ele[5]}</div>
-                  <div class="ball-blue">${ele[6]}</div>
-                </div>
-              </td>
-              <td>
-                <a href="javascript: " data-id = "${index}">
-                删除
-                </a>
-              </td>
-            </tr>
-            `
-          }) 
-          tbody.innerHTML = trArr.join('')
-        }
-        rand.addEventListener('click',function(e){
-          // 获取红蓝传入的条件
-          // 需要控制下输入值不能为0
-          const redJoinArr = redJoin.value ? redJoin.value.split(',') : []
-          // console.log(redJoinArr)
-          const redRemoveArr = redRemove.value ? redRemove.value.split(',') : []
-          const blueJoinArr = blueJoin.value ? blueJoin.value.split(',') : []
-          const blueRemoveArr = blueRemove.value ? blueRemove.value.split(',') : []
-          // console.log(blueRemoveArr)
-
-          let redBallArr = redJoinArr.splice(0,6)
-          // console.log(redBallArr)
-
-          // 生成红球,并存入数组
-          while (redBallArr.length < 6){
-            let redNum = String(getRandom(1,33))
-            // console.log('redNum=',redNum,typeof(redNum))
-            if (redRemoveArr.length > 0){
-              let temp = redRemoveArr.indexOf(redNum)
-              // console.log('temp',temp)
-              if (temp === -1){
-              }else{
-                // 结束本次
-                continue
-              }
-            }
-            let a = redBallArr.indexOf(redNum)
-            // console.log(num)
-            if (a === -1){
-              redBallArr.push(redNum)
-            }
-          }
-          // 红球数组排序
-          redBallArr.sort(function(a,b){
-            return a - b
-          })
-          // 生成篮球
-          while (redBallArr.length < 7){
-          // blueJoinArr不为空情况
-            if (blueJoinArr.length > 0){
-              let blueNum = blueJoinArr[getRandom(0,blueJoinArr.length -1)]
-              redBallArr.push(blueNum)
-
-            }else if(blueRemoveArr.length > 0){
-              let blueNum = String(getRandom(1,16))
-              let temp = blueRemoveArr.indexOf(blueNum)
-              if (temp === -1){
-                redBallArr.push(blueNum)
-              }else{
-                continue
-              }
-
-            }else{
-              let blueNum = getRandom(1,16)
-              redBallArr.push(blueNum)
-            }
-          }
-          // 调用函数渲染页面
-          arr.push(redBallArr)
-          randBall()
-          // ballReset()
-        })
-
-        // 删除，采用事件委托形式，给tbody注册点击事件
-        tbody.addEventListener('click',function(e){
-          // console.log(e.target.tagName)
-          if (e.target.tagName === 'A'){
-            arr.splice(e.target.dataset.id,1)
-          }
-          randBall()
-        })
-      </script>
+    <div id="blueball" style="flex:1;margin-left: 10px;">
+    </div>
   </div>
+  <div class="btn" id="rand" style="margin: 20px 0;">随机生成</div>
+  <div id="result"></div>
+
+  <script>
+    //获取元素
+    const show = document.querySelector('#showExclude')
+    const select = document.querySelector('#wrapExclude')
+    const redball= document.querySelector('#redball')
+    const blueball= document.querySelector('#blueball')
+    const rand = document.querySelector('#rand')
+    const result = document.querySelector('#result')
+    // 存放生成红蓝随机数
+    let arr = []
+
+    // 生成可筛选的红和蓝
+    for(let i = 1; i < 34 ; i++){
+      const span = document.createElement('span')
+      span.innerHTML = `<span class="ball red" data-value="${i}">${i}</span>`
+      redball.appendChild(span)
+    }
+    for(let j = 1; j < 17 ; j++){
+      const span = document.createElement('span')
+      span.innerHTML = `<span class="ball blue" data-value="${j}">${j}</span>`
+      blueball.appendChild(span)
+    }
+
+    // 点击后，展示筛选
+    show.addEventListener('click',function(){
+      const tempStyle = select.style.display
+      if(tempStyle === 'none'){
+        select.style.display = 'flex'
+      }else{
+        select.style.display = 'none'
+      }
+    })
+
+    // 筛选
+    select.addEventListener('click',function(e){
+      // 正则，获取元素
+      const disabledzz = /disabled/
+      let targetElement = e.target
+      // 根据元素状态添加样式
+      if(e.target.tagName === 'SPAN'){
+        if(disabledzz.test(e.target.className)){
+        targetElement.classList.remove('disabled')
+        }else{
+        targetElement.classList.add('disabled')
+        }
+      } 
+    })
+    // 函数：生成n-m区间的号码
+    function getRandom(n,m){
+      return Math.floor(Math.random()*(m - n + 1 ) + n)
+    }
+    
+    // 函数：获取筛选元素value
+    function getValue(str){
+      const valueObj = document.querySelectorAll(str)
+      let valueArr = []
+      for (let i = 0 ; i < valueObj.length ; i ++ ){
+        valueArr.push(+valueObj[i].innerText)
+      }
+      return valueArr
+    }
+
+    //函数:生成随机数数组
+    function randomArr(removeRedArr,removeblueArr){
+      let colArr = []
+      // 红球
+      while (colArr.length < 6){
+        let redNum = getRandom(1,33)
+        if (removeRedArr.length > 0){
+          let temp = removeRedArr.indexOf(redNum)
+          if (temp === -1){
+          }else{
+            // 结束本次
+            continue
+          }
+        }
+        let a = colArr.indexOf(redNum)
+        // console.log(num)
+        if (a === -1){
+          colArr.push(redNum)
+        }
+      // 红球排序
+      colArr.sort(function(a,b){
+            return a - b
+      })
+      }
+      while (colArr.length < 7){
+        let blueNum = getRandom(1,16)
+        if (removeblueArr.length > 0){
+          let temp = removeblueArr.indexOf(blueNum)
+          if (temp === -1){
+          }else{
+            // 结束本次
+            continue
+          }
+        }
+        colArr.push(blueNum)
+      }
+      return colArr
+    }
+
+    //函数：渲染生成结果
+    function randBall(){
+      const tempArr = arr.map(function (ele,index) {
+        return `
+        <div>
+          <span class="ball big-ball red">${ele[0]}</span>
+          <span class="ball big-ball red">${ele[1]}</span>
+          <span class="ball big-ball red">${ele[2]}</span>
+          <span class="ball big-ball red">${ele[3]}</span>
+          <span class="ball big-ball red">${ele[4]}</span>
+          <span class="ball big-ball red">${ele[5]}</span>
+          <span class="ball big-ball blue" style="margin-left:10px">${ele[6]}</span>
+          <span class="delete" data-value="${index}">删除</span>
+        </div>
+        `
+      })
+
+      result.innerHTML = tempArr.join('')
+    }
+    // 点击生成随机数
+    rand.addEventListener('click',function(){
+      // 获取移除的红蓝数组
+      const redStr = '.ball.red.disabled'
+      const blueStr = '.ball.blue.disabled'
+      let removeRedArr = getValue(redStr)
+      let removeblueArr = getValue(blueStr)
+      // console.log(removeRedArr)
+      // console.log(removeblueArr)
+      // 生成随机数展示数组
+      const colArr = randomArr(removeRedArr,removeblueArr)
+      // console.log(colArr)
+      arr.push(colArr)
+      randBall()
+    })
+    // 删除，采用事件委托形式，给result注册点击事件
+    result.addEventListener('click',function(e){
+      // console.log(e.target.tagName)
+      if (e.target.tagName === 'SPAN'){
+        arr.splice(e.target.dataset.value,1)
+      }
+      randBall()
+    })
+  </script>
+</body>
+</html>
+
+
